@@ -33,7 +33,9 @@ if __name__ == '__main__':
     try:
         cards = load_cards()
         help_menu()
-        command = input(" > ").strip().lower()[0]
+        command = input(" > ").strip().lower()
+        if command != '':
+            command = command[0]
         while command != 'e':
             if command == 'a':
                 print(cards)
@@ -95,7 +97,9 @@ if __name__ == '__main__':
                             print('Incorrect, try again :)')
                             guess = input('  %s\n > ' % card)
             #Next command
-            command = input(" > ").strip().lower()[0]
+            command = input(" > ").strip().lower()
+            if command != '':
+                command = command[0]
     except (EOFError,KeyboardInterrupt):
         #Some user's method for exiting.
         pass
