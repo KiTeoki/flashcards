@@ -21,8 +21,8 @@ def help_menu():
     [A]ll cards
     [C]reate new card
     [D]elete card
-    [L]ookup cards
     [H]elp menu
+    [L]ookup cards
     [M]odify cards
     [S]tart studying with random cards
     [E]xit
@@ -41,9 +41,9 @@ if __name__ == '__main__':
                 print(cards)
             elif command == 'c':
                 #Create new card
-                print("To stop creating new cards, enter 'EXIT' as the front of a card.")
+                print("To stop creating new cards, leave the front of a card blank.")
                 front = input('Enter the front of the card:\n > ')
-                while front != 'EXIT':
+                while front != '':
                     back = input('Enter the back of the card:\n > ')
                     cards[front]=back
                     print('New card added')
