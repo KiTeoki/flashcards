@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+import pickle
+import random
+
+#Flashcard storage
+def save_cards(cards):
+    with open('flashcards.pkl', 'wb') as f:
+        pickle.dump(cards, f)
+def load_cards():
+    try:
+        with open('flashcards.pkl', 'rb') as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        #First run
+        cards = {}
+        save_cards(cards)
+        return cards
+
+def help_menu():
+    print("""Available commands:
+    [A]ll cards
+    [C]reate new card
+    [D]elete card
+    [L]ookup cards
+    [H]elp menu
+    [M]odify cards
+    [S]tart studying with random cards
+    [E]xit
+    """)
+
+if __name__ == '__main__':
+    print("Welcome to flashcards!")
+    try:
+        cards = load_cards()
+        help_menu()
+        command = input(" > ").strip().lower()[0]
+        while command != 'e':
+            if command == 'a':
+                print(cards)
+            elif command == 'c':
+                #Create new card
+                print("To stop creating new cards, enter 'EXIT' as the front of a card.")
+                front = input('Enter the front of the card:\n > ')
+                while front != 'EXIT':
+                    back = input('Enter the back of the card:\n > ')
+                    cards[front]=back
+                    print('New card added')
+                    front = input('Enter the front of the card:\n > ')
+            elif command == 'd':
+                lookup = input('Enter card to delete, or leave empty to return to menu:\n > ')
+                if lookup != '':
+                    if lookup in cards:
+                        del cards[lookup]
+                    else:
+                        print('Card not found')
+            elif command == 'l':
+                #Lookup card
+                lookup = input('Enter card to search for, or leave empty to return to menu:\n > ')
+                while lookup != '':
+                    print(lookup,':', cards[lookup] if lookup in cards else 'not found')
+                    lookup = input('Enter card to search for, or leave empty to return to menu:\n > ')
+            elif command == 'h':
+                help_menu()
+            elif command == 'm':
+                #Modify card
+                lookup = input('Enter card to search for, or leave empty to return to menu:\n > ')
+                while lookup != '':
+                    if lookup in cards:
+                        back = input('Currently: %s.\n Please enter a new value for the back, or leave empty to keep as is. \n > ' % cards[lookup])
+                    else:
+                        print('Card not found. To make this a new card, provide a value for the back; to return to the menu press enter.\n > ')
+                    lookup = input('Enter card to search for, or leave empty to return to menu: \n >')
+            elif command == 's':
+                #Normal study
+                if len(cards) == 0:
+                    print("You must add flashcards first!")
+                else:
+                    #Optimisation: no need to recompute
+                    options = list(cards.keys())
+                    print("You will be presented with a series of flashcards. Guess the back, press enter to see it anyway, or type 'EXIT' to stop.")
+                    card = random.choice(options)
+                    guess = input('  %s\n > ' % card)
+                    while guess != 'EXIT':
+                        if guess == '':
+                            #Pass
+                            print(cards[card])
+                            card = random.choice(options)
+                            guess = input('  %s\n > ' % card)
+                        elif guess.lower() == cards[card].lower():
+                            print('Correct!')
+                            card = random.choice(options)
+                            guess = input('  %s\n > ' % card)
+                        else:
+                            #Incorrect
+                            print('Incorrect, try again :)')
+                            guess = input('  %s\n > ' % card)
+            #Next command
+            command = input(" > ").strip().lower()[0]
+    except (EOFError,KeyboardInterrupt):
+        #Some user's method for exiting.
+        pass
+    finally:
+        #Exit
+        save_cards(cards)
+        print("\nSee you later :)\n")
